@@ -4,7 +4,6 @@ vscode-chrome-debug.txt
 npm-debug.log
 *.vsix
 *.pyc
-*.wav
 
 .idea/
 lib/
