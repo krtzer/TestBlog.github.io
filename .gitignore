@@ -6,7 +6,7 @@ npm-debug.log
 *.pyc
 *.wav
 
-.idea/*
+.idea/
 lib/
 node_modules/
 /out/
