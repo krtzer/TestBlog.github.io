@@ -6,30 +6,16 @@ import wave
 import sys
 import soundfile as sf
 
-data, samplerate = sf.read(r'C:\Users\krtzer\Documents\BlogWebSite\Python Playground\021000000.flac')
-samplerate
+data, samplerate = sf.read(r'C:\Users\krtzer\Documents\albino-grackle\content\projects\box-counting-sound\021000000.wav')
 
-spf = sf.read(r'C:\Users\krtzer\Documents\BlogWebSite\Python Playground\APPLAUSE.WAV','rb')
-
-#spf = wave.open(r'C:\Users\krtzer\Documents\BlogWebSite\Python Playground\021000000.flac','rb')
-
-#Extract Raw Audio from Wav File
-signal = spf.readframes(-1)
-framerate = spf.getframerate()
 # need to figure out how to what the bitness if of the signal 
 # seems related to bitrate. This signal is 64 kbps
-signal = np.fromstring(signal, 'int8')
 
-#If Stereo
-if spf.getnchannels() == 2:
-    print ('Just mono files')
-    sys.exit(0)
-
-Time = np.linspace(0, len(signal)/framerate, num = len(signal))
+Time = np.linspace(0, len(data)/samplerate, num = len(data))
 	
 plt.figure(1)
 plt.title('Songs Waveform')
-plt.plot(Time,signal)
+plt.plot(Time[0:3000000],data[0:3000000,0])
 plt.show()
 
 def BoxCounting (signal):
