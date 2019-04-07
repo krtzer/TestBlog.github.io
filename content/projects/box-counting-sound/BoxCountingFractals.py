@@ -12,6 +12,7 @@ from shapely.geometry import Point, Polygon, MultiPoint, MultiPolygon, MultiLine
 from shapely.ops import polygonize
 from matplotlib.collections import PatchCollection
 from descartes import PolygonPatch
+from geopandas import GeoSeries
 
 '''def MakeGrid (sideLength, audiodata song):
     	x1, x2, y1, y2 = 0
@@ -24,8 +25,15 @@ from descartes import PolygonPatch
 '''
 data, samplerate = sf.read(r'C:\Users\krtzer\Documents\albino-grackle\content\projects\box-counting-sound\021000000.wav')
 
+#dataInPoints = GeoSeries(map(Point, data[:300,:]))
+
+dataInPoints = []
+
+for x, y in data:
+    	dataInPoints.append(Point(x,y))
+
 # length of squre in samples
-GridUnitLength = 2**18
+GridUnitLength = 2**21
 
 # need to figure out how to what the bitness if of the signal 
 # seems related to bitrate. This signal is 64 kbps
@@ -50,7 +58,7 @@ grids = list(polygonize(intermeditateSum))
 # Make grid ot match 
 #xv,yv = np.meshgrid(np.linspace(0, len(data),100),Time)
 
-'''
+
 # Copied from https://stackoverflow.com/questions/36399381/whats-the-fastest-way-of-checking-if-a-point-is-inside-a-polygon-in-python 
 first = -3
 size  = (3-first)/100
@@ -66,7 +74,7 @@ plt.imshow(grid.T,origin='lower',interpolation='nearest',cmap='binary')
 plt.scatter(((xi-first)/size).astype('int'),((yi-first)/size).astype('int'),c=vflag,cmap='Blues',s=90)
 plt.show()
 # End copied
-'''
+
 
 BLUE = '#6699cc'
 fig = plt.figure(1)
@@ -77,8 +85,10 @@ ax = fig.gca()
 #ax.axis('scaled')
 
 for grid in grids:
-    ax.add_patch(PolygonPatch(grid, fc=BLUE, ec=BLUE, alpha=0.5, zorder=2 ))
+    	ax.add_patch(PolygonPatch(grid, fc=BLUE, ec=BLUE, alpha=0.5, zorder=2 ))
 
+for point in dataInPoints:
+		ax.add_patch(PolygonPatch(point, fc='#cc00cc', ec='#cc00cc', alpha=0.5, zorder=2))
 plt.title('Songs Waveform')
-plt.plot(Time[0:3000000],data[0:3000000,0])
+#plt.plot(Time[0:3000000],data[0:3000000,0])
 plt.show()
