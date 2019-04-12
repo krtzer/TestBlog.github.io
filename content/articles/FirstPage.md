@@ -70,3 +70,5 @@ Doing FFTs in in python and using it as a tool is great.
 [how-to-polygonize]: https://stackoverflow.com/questions/37041377/numpy-meshgrid-to-shapely-polygons
 [useful-blog-on-shapely]: http://beneathdata.com/how-to/visualizing-my-location-history/
 [gdal-install]: https://stackoverflow.com/questions/43587960/gdal-installation-error-using-pip
+[python-check-ifpoly-is-inpoint]: https://stackoverflow.com/questions/36399381/whats-the-fastest-way-of-checking-if-a-point-is-inside-a-polygon-in-python 
+[why-boxingcounting-is-failing]: https://stackoverflow.com/questions/2896752/removing-item-from-list-during-iteration-whats-wrong-with-this-idiom
