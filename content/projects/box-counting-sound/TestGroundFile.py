@@ -19,21 +19,20 @@ boxes.append(polygon2)
 def CountBoxes (boxes, points):
     countedboxes = 0
     PointInBox = False
-    for box in boxes:
-        for point in points:
+    for box in boxes[:]:
+        for point in points[:]:
             if box.contains(point):
                 PointInBox = True
-                points.remove(point)
+                #points.remove(point)
         if PointInBox:
             countedboxes +=1
-            boxes.remove(box)
+            boxes.split(box)
             PointInBox = False
 
 
     return countedboxes
 
-print(countedboxes)
-
+print CountBoxes()
 
 # Copied from https://stackoverflow.com/questions/36399381/whats-the-fastest-way-of-checking-if-a-point-is-inside-a-polygon-in-python 
 first = -3

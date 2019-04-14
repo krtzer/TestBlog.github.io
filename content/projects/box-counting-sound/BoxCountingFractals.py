@@ -18,17 +18,15 @@ def CountBoxes (boxes, points):
 
     countedboxes = 0
     PointInBox = False
-    x = 0
-    for box in boxes:
-        for point in points:
+    for box in boxes[:]:
+        for point in points[:]:
             if box.contains(point):
                 PointInBox = True
-                #points.remove(point)
+                points.remove(point)
         if PointInBox:
             countedboxes +=1
             boxes.remove(box)
             PointInBox = False
-        x += 1
     return countedboxes
 
 data, samplerate = sf.read(r'C:\Users\krtzer\Documents\albino-grackle\content\projects\box-counting-sound\021000000.wav')
