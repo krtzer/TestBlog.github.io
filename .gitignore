@@ -4,6 +4,7 @@ vscode-chrome-debug.txt
 npm-debug.log
 *.vsix
 *.pyc
+*.wav
 
 .idea/
 lib/
@@ -12,3 +13,12 @@ node_modules/
 typings/
 testapp/.vscode/chrome
 testapp/**/out/
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
