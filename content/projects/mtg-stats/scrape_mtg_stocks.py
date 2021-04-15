@@ -5,6 +5,7 @@ import random
 from use_db import db_interface
 import time
 import pandas as pd
+from itertools import zip_longest
 
 BASEURL = 'https://api.mtgstocks.com/prints/'
 
@@ -23,6 +24,10 @@ def get_all_cards_magic(existing_ids, dead_ids, api_batch):
 
     shortlist = [x for x in randomlist if x not in blacklist]
     retrylist = []
+
+    random_Api_calls = [BASEURL+str(i) for i  in shortlist] 
+
+
     start_time = time.time()
     for i in randomlist: 
         r = requests.get(BASEURL+str(i))
