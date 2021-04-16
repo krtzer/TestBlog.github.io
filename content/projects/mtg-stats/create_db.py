@@ -84,6 +84,10 @@ if __name__ == "__main__":
             id SERIAL NOT NULL PRIMARY KEY,
             card_name VARCHAR (100),
             mtg_set VARCHAR (5),
+            rarity VARCHAR (5),
+            reserved_list BOOLEAN,
+            latest_mk_price NUMERIC (7,2),
+            date BIGINT,
             mtgstocks_id INT,
             raw_print_json JSONB NOT NULL
         )
