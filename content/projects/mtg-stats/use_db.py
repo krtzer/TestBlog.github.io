@@ -22,6 +22,13 @@ class db_interface:
         self.connection.close()
         self.cursor.close()
 
+    def get_columns(self, table):
+        column_name = ''
+        self.cursor.execute(
+            f"SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}';")
+        column_name = [result[0] for result in self.cursor.fetchall()]
+        return column_name
+
     def insert_dead_id(self, mtgstocks_id: int) -> None:
         dead_id_query = "INSERT INTO dead_ids(mtgstocks_id) VALUES (%s)"
         
@@ -145,6 +152,16 @@ class db_interface:
             print("Query:", self.cursor.query)
             self.connection.rollback()    
 
+    def insert_data_new_prints(self, df: pd.DataFrame, chunk_size):
+        data_tuples = [tuple(row.to_numpy()) for index, row in df.iterrows()]
+        query = "INSERT INTO prints (card_name, mtg_set, rarity, reserved_list, latest_mk_price, date, mtgstocks_id, raw_print_json) VALUES %s"
+        try: 
+            psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
+        except Exception as error:
+            self.connection.rollback()
+            self.cursor.close()
+        else:
+            self.connection.commit()
 
 if __name__ == "__main__":
     
