@@ -26,3 +26,4 @@ content/projects/mtg-stats/conn_info_pi.ini
 .gitignore
 content/projects/mtg-stats/conn_info_windows.ini
 content/projects/mtg-stats/setup_windows_db.ps1
+content/projects/mtg-stats/test.py

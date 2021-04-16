@@ -27,38 +27,38 @@ def get_all_cards_magic(existing_ids, dead_ids, api_batch):
 
     random_Api_calls = [BASEURL+str(i) for i  in shortlist] 
 
-
     start_time = time.time()
     for i in randomlist: 
-        r = requests.get(BASEURL+str(i))
-        if (r.status_code == 200):
-            blob = r.json()
-            
-            name = blob['name']
-            set_abr = blob['card_set']['abbreviation']
-            rarity = blob['rarity']
-            reserved_list = blob['card']['reserved']
-            latest_market_price = blob['latest_price']['market']
-            mtg_stocks_id = blob['id']
-            
-            postgres_mtg.insert_prints_data(name, set_abr, mtg_stocks_id, r.text)
-            
-            print (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(None)) + " Added: "+" | " + name +" | " + str(set_abr) +" | " + str(latest_market_price))
+        if i is not None:
+            r = requests.get(i)
+            if (r.status_code == 200):
+                blob = r.json()
+                
+                name = blob['name']
+                set_abr = blob['card_set']['abbreviation']
+                rarity = blob['rarity']
+                reserved_list = blob['card']['reserved']
+                latest_market_price = blob['latest_price']['market']
+                mtg_stocks_id = blob['id']
+                
+                postgres_mtg.insert_prints_data(name, set_abr, mtg_stocks_id, r.text)
+                
+                print (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(None)) + " Added: "+" | " + name +" | " + str(set_abr) +" | " + str(latest_market_price))
 
-        elif (r.status_code == 502) or (r.status_code == 404):
-            # black list this id because it doesn't exist anymore
-            print (str(r.status_code) + " on Id " + str(i))
-            postgres_mtg.insert_dead_id(i)
+            elif (r.status_code == 502) or (r.status_code == 404):
+                # black list this id because it doesn't exist anymore
+                print (str(r.status_code) + " on Id " + str(i))
+                postgres_mtg.insert_dead_id(i)
+                
+            else:
+                retrylist.append(i)
+                print (str(r.status_code) + " on Id " + str(i))
+                # log id, log status, probably retry
             
-        else:
-            retrylist.append(i)
-            print (str(r.status_code) + " on Id " + str(i))
-            # log id, log status, probably retry
-        
-    end_time = time.time()
+        end_time = time.time()
 
-    print (end_time - start_time)
-    print (retrylist)
+        print (end_time - start_time)
+        print (retrylist)
 
 
 if __name__ == "__main__":
