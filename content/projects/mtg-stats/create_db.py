@@ -69,7 +69,7 @@ def create_table(sql_query: str, conn: psycopg2.extensions.connection, cur: psyc
 
 if __name__ == "__main__":
     # host, database, user, password
-    conn_info = load_connection_info("conn_info_pi.ini")
+    conn_info = load_connection_info("conn_info_windows.ini")
 
     # Create the desired database
     create_db(conn_info)

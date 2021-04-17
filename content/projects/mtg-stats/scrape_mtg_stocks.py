@@ -36,8 +36,8 @@ def get_all_cards_magic(existing_ids, dead_ids, chunk_size):
 
     chunked_Api_Calls = grouper(random_Api_calls, chunk_size)
 
-    start_time = time.time()
     for chunk in chunked_Api_Calls: 
+        start_time = time.time()
         prints_chunk = []
         for api_call in chunk:
             if api_call is not None:
@@ -82,7 +82,7 @@ def get_all_cards_magic(existing_ids, dead_ids, chunk_size):
 
 if __name__ == "__main__":
     test_stocks_api(9177)
-    postgres_mtg = db_interface("conn_info_pi.ini")
+    postgres_mtg = db_interface("conn_info_windows.ini")
     get_all_cards_magic(postgres_mtg.existing_ids, postgres_mtg.dead_ids, 1000)
     postgres_mtg.close()
 
