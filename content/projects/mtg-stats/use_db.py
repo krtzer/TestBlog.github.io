@@ -7,6 +7,7 @@ import pandas as pd
 # https://stackoverflow.com/questions/41272454/python-custom-module-name-not-defined/55361835#55361835
 # https://www.csee.umbc.edu/courses/331/fall10/notes/python/python3.ppt.pdf 
 # https://stackoverflow.com/questions/26703476/how-to-perform-update-operations-on-columns-of-type-jsonb-in-postgres-9-4 
+# https://medium.com/swlh/create-your-first-postgresql-database-in-python-with-psycopg2-9d0986e0e9ac
 
 class db_interface:
 
@@ -163,8 +164,44 @@ class db_interface:
         else:
             self.connection.commit()
 
+    def get_prints_table(self):
+        existing_id_query = "SELECT card_name,  mtg_set, rarity, reserved_list, latest_mk_price, date, mtgstocks_id FROM prints;"
+        results = []
+        try: 
+            self.cursor.execute(existing_id_query)
+            while True:
+                # Fetch rows
+                result = self.cursor.fetchmany(100)
+                if result == list():
+                    break
+                for row in result:
+                    results.append(row[0])
+
+            return results
+        
+        except Exception as error:
+            self.connection.rollback()
+            self.cursor.close()
+            print (error)
+
+
+    def query_mkt_val_for_card_and_set(self, selector_list):
+        
+        query = "SELECT mtgstocks_id, latest_mk_price  FROM prints WHERE card_name = %s AND mtg_set = UPPER(%s);"
+        results = []
+        try:
+            self.cursor.execute(query, selector_list)
+            results = self.cursor.fetchall()[0]        
+            return results
+        
+        except Exception as error: 
+            print (error, "Could not find ", selector_list[0])
+            return None, None
+
 if __name__ == "__main__":
     
-    my_db = db_interface("conn_info_pi.ini")
+    my_db = db_interface("conn_info_windows.ini")
     result = my_db.get_mtg_stock_indices()
+    results2 = my_db.query_mkt_val_for_card_and_set(["Kytheon, Hero of Akros", "ori"])
+    print(results2)
     my_db.close()
