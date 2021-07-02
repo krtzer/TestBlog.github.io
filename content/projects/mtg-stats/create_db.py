@@ -88,22 +88,11 @@ if __name__ == "__main__":
             reserved_list BOOLEAN,
             latest_mk_price NUMERIC (7,2),
             date BIGINT,
-            mtgstocks_id INT,
+            mtgstocks_id INT UNIQUE,
             raw_print_json JSONB NOT NULL
         )
     """
     create_table(prints_sql, connection, cursor)
-
-
-    # Create the "prices" table
-    prices_sql = """
-        CREATE TABLE IF NOT EXISTS prices (
-            id SERIAL PRIMARY KEY, 
-            print_id INT REFERENCES prints(id),
-            raw_price_json JSONB NOT NULL
-        )
-    """
-    create_table(prices_sql, connection, cursor)
 
     # Create the "dead_ids" table
     dead_id_sql = """
@@ -114,6 +103,31 @@ if __name__ == "__main__":
     """
     create_table(dead_id_sql, connection, cursor)
 
+    prices_averages_sql = """
+        CREATE TABLE IF NOT EXISTS prices_averages (
+            id SERIAL PRIMARY KEY,
+            print_id INT REFERENCES prints(mtgstocks_id),
+            timestamp DOUBLE PRECISION,
+            avg MONEY   
+        )
+    """
+
+    create_table(prices_averages_sql, connection, cursor)
+
+    prices_market_sql = """
+        CREATE TABLE IF NOT EXISTS prices_market (
+            id SERIAL PRIMARY KEY,
+            print_id INT REFERENCES prints(mtgstocks_id),
+            timestamp DOUBLE PRECISION,
+            mkt MONEY   
+        )
+    """
+
+    create_table(prices_market_sql, connection,cursor)
+
     # Close all connections to the database
     connection.close()
     cursor.close()
+
+
+
