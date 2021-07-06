@@ -64,12 +64,12 @@ class db_interface:
         else:
             self.connection.commit()        
 
-    def insert_prints_data(self, cardname: str, mtg_set: str, mtgstocks_id: int, raw_print_json: str) -> None:        
-        prints_query = "INSERT INTO prints(card_name, mtg_set, mtgstocks_id, raw_print_json) VALUES %s"
+    def insert_prints_data(self, cardname: str, mtg_set: str, mtgstocks_id: int) -> None:        
+        prints_query = "INSERT INTO prints(card_name, mtg_set, mtgstocks_id) VALUES %s"
 
         try:
             psql_extras.execute_values(
-                self.cursor, prints_query, [(cardname, mtg_set, mtgstocks_id, raw_print_json)])
+                self.cursor, prints_query, [(cardname, mtg_set, mtgstocks_id)])
             print("Success: ", prints_query)
 
         except Exception as error:
@@ -96,7 +96,7 @@ class db_interface:
             "raw_print_json": [R'{"id":34655,"slug":"34655-bat-token","name":"Bat Token"}']
         })
 
-        test_query = "INSERT INTO prints(card_name, mtg_set, mtgstocks_id, raw_print_json) VALUES %s"
+        test_query = "INSERT INTO prints(card_name, mtg_set, mtgstocks_id) VALUES %s"
         data_tuples = [tuple(row.to_numpy()) for index, row in test_df.iterrows()]
 
         try:
@@ -155,7 +155,7 @@ class db_interface:
 
     def insert_data_new_prints(self, df: pd.DataFrame, chunk_size):
         data_tuples = [tuple(row.to_numpy()) for index, row in df.iterrows()]
-        query = "INSERT INTO prints (card_name, mtg_set, rarity, reserved_list, latest_mk_price, date, mtgstocks_id, raw_print_json) VALUES %s"
+        query = "INSERT INTO prints (card_name, mtg_set, rarity, reserved_list, latest_mk_price, date, mtgstocks_id) VALUES %s"
         try: 
             psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
         except Exception as error:
@@ -197,6 +197,38 @@ class db_interface:
         except Exception as error: 
             print (error, "Could not find ", selector_list[0])
             return None, None
+
+    def insert_into_prices_mkt(self, df: pd.DataFrame, chunk_size):
+        data_tuples = [tuple(row.to_numpy()) for index, row in df.iterrows()]
+        query = "INSERT INTO prices_market (mtgstocks_id, timestamp, mkt) VALUES %s"
+        try: 
+            psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
+        except Exception as error:
+            self.connection.rollback()
+            self.cursor.close()
+        else:
+            self.connection.commit()      
+
+    def insert_into_prices_avg(self, df: pd.DataFrame, chunk_size):
+        data_tuples = [tuple(row.to_numpy()) for index, row in df.iterrows()]
+        query = "INSERT INTO prices_averages (mtgstocks_id, timestamp, avg) VALUES %s"
+        try: 
+            psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
+        except Exception as error:
+            self.connection.rollback()
+            self.cursor.close()
+        else:
+            self.connection.commit()      
+
+    def update_latest_mkt_price(self, df: pd.DataFrame, chunk_size):
+        data_tuples = [tuple(row.to_numpy()) for index, row in df.iterrows()]
+        query = "UPDATE prints SET latest_mk_price=%s WHERE mtgstocks_id =%s"
+        try:
+            psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
+        except Exception as error:
+            self.connection.rollback()
+        else:
+            self.connection.commit()
 
 if __name__ == "__main__":
     
