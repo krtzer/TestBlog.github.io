@@ -3,6 +3,7 @@ import psycopg2
 import psycopg2.extras as psql_extras
 from create_db import * 
 import pandas as pd
+from decimal import Decimal
 
 # https://stackoverflow.com/questions/41272454/python-custom-module-name-not-defined/55361835#55361835
 # https://www.csee.umbc.edu/courses/331/fall10/notes/python/python3.ppt.pdf 
@@ -229,6 +230,35 @@ class db_interface:
             self.connection.rollback()
         else:
             self.connection.commit()
+
+    def get_avg_data(self, card_name):
+        card_name = card_name.replace('\'', '\'\'')
+        id_query = f"SELECT mtgstocks_id, mtg_set, latest_mk_price FROM public.prints WHERE card_name = '{card_name}';"
+        results = []
+        price_results = []
+        try:
+            self.cursor.execute(id_query)
+            id_results = self.cursor.fetchall()  
+            id_tuple = tuple([x[0] for x in id_results])
+            for row in id_results:
+                id = row[0]
+                mtg_set = row[1]
+                prices_query = f"SELECT mtgstocks_id, timestamp, avg FROM prices_averages WHERE mtgstocks_id = {id} ;"
+                self.cursor.execute(prices_query)
+                data = self.cursor.fetchall() 
+                # I had to use a float type for the price because that is the way I can use the STD method on the column
+                if data != []:
+                    if '$' in data[0][2] or ',' in data[0][2]:
+                        scrubbed_data = [tuple([clean_row[0], clean_row[1], mtg_set, float(clean_row[2].replace(',','').strip('$'))]) for clean_row in data]
+                    else:
+                        scrubbed_data = [tuple([clean_row[0], clean_row[1], mtg_set, float(clean_row[2])]) for clean_row in data]
+                prices_df = pd.DataFrame(data=scrubbed_data, columns=['mtgstocks_id', 'timestamp', 'mtg_set', 'avg']) 
+                price_results.append(prices_df)
+            return price_results
+        
+        except Exception as error: 
+            print (error, "Could not find ", card_name)
+            return None, None
 
 if __name__ == "__main__":
     

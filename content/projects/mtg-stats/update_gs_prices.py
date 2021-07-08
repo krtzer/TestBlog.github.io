@@ -1,15 +1,20 @@
 from use_db import *
 from use_sheets import *
+from mtg_analysis import *
 import pandas as pd
 import math
 BASEURL = 'https://www.mtgstocks.com/prints/'
 
-if __name__ == "__main__":
-    postgres_mtg = db_interface("conn_info_windows.ini")
-    vc_interface = gs_interface("Vintage-Cube-Kurt-Edition")
-    cube_df = vc_interface.sheets_df
+def get_all_cards(sheet_df):
+    cols = 'Name'
+    return sheet_df[cols]
 
-    updated_df = cube_df.copy()
+def get_unowned_cards(sheet_df):
+    cols = 'Owner'
+    sheet_df[cols] = sheet_df[sheet_df[cols] != 'Kurt'][cols]
+    return sheet_df.dropna()
+
+def update_gs_prices(sheet_df):
     problem_list = []
     for index, row in cube_df.iterrows():
         # print (index, row)
@@ -25,4 +30,28 @@ if __name__ == "__main__":
             problem_list.append(row)
 
     vc_interface.commit_table(updated_df)
+
+    return problem_list
+
+if __name__ == "__main__":
+    postgres_mtg = db_interface("conn_info_windows.ini")
+    vc_interface = gs_interface("Vintage-Cube-Kurt-Edition")
+    cube_df = vc_interface.sheets_df
+    updated_df = cube_df.copy()
+    unowned_df = get_unowned_cards(updated_df)
+    cards = get_all_cards(unowned_df)
+
+    for card in cards:
+        prices_df = postgres_mtg.get_avg_data(card)
+        print (card)
+        if prices_df != (None, None):
+            results = data_formatter(prices_df)
+            results_df = pd.DataFrame(results,columns=['Timespace', 'Edition', 'Current Price', 'Minimum in Epoch', 'Date of Epoch Min', \
+            'Percent change Current Price from Epoch Min', 'Standard Dev'])
+            for result in results:
+                print(result)
+
+    # card_names = get_all_cards(updated_df)
+
+
     postgres_mtg.close()
