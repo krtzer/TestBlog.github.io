@@ -42,7 +42,6 @@ class db_interface:
             print(f"{type(error).__name__}: {error}")
             print("Query:", self.cursor.query)
             self.connection.rollback()
-            self.cursor.close()
             raise
 
         else:
@@ -60,7 +59,6 @@ class db_interface:
             print(f"{type(error).__name__}: {error}")
             print("Query:", self.cursor.query)
             self.connection.rollback()
-            self.cursor.close()
 
         else:
             self.connection.commit()        
@@ -77,7 +75,6 @@ class db_interface:
             print(f"{type(error).__name__}: {error}")
             print("Query:", self.cursor.query)
             self.connection.rollback()
-            self.cursor.close()
 
         else:
             self.connection.commit()
@@ -109,7 +106,6 @@ class db_interface:
             print(f"{type(error).__name__}: {error}")
             print("Query:", self.cursor.query)
             self.connection.rollback()
-            self.cursor.close()
 
         else:
             self.connection.commit()
@@ -161,7 +157,6 @@ class db_interface:
             psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
         except Exception as error:
             self.connection.rollback()
-            self.cursor.close()
         else:
             self.connection.commit()
 
@@ -182,7 +177,6 @@ class db_interface:
         
         except Exception as error:
             self.connection.rollback()
-            self.cursor.close()
             print (error)
 
 
@@ -206,7 +200,6 @@ class db_interface:
             psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
         except Exception as error:
             self.connection.rollback()
-            self.cursor.close()
         else:
             self.connection.commit()      
 
@@ -217,7 +210,6 @@ class db_interface:
             psql_extras.execute_values(self.cursor, query, data_tuples, page_size=chunk_size)
         except Exception as error:
             self.connection.rollback()
-            self.cursor.close()
         else:
             self.connection.commit()      
 
