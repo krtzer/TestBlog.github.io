@@ -11,7 +11,11 @@ class gs_interface:
         self.creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', self.scope)
         self.client = gspread.authorize(self.creds)
         self.sheet = self.client.open(workbook).sheet1
-        self.sheets_df = pd.DataFrame(self.sheet.get_all_records())          
+        self.sheets_df = pd.DataFrame(self.sheet.get_all_records())  
+
+    def update_sheet(self, df):
+        # Take df and make it a list to update the server
+        self.sheet.update([df.columns.values.tolist()] + df.values.tolist())
 
 if __name__ == "__main__":
     my_gs = gs_interface("Vintage-Cube-Kurt-Edition")

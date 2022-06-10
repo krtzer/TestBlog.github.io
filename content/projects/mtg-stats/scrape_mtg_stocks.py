@@ -2,6 +2,8 @@ import requests
 import json
 import urllib
 import random
+
+from requests.api import head
 from use_db import db_interface
 import time
 import pandas as pd
@@ -113,7 +115,7 @@ def update_all_cards_with_latest_prices(existing_ids, chunk_size):
     # TODO when you have the list of dead IDs, remove them from this list
     retrylist = []
     retrylimit = 5
-
+    headers= {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:90.0) Gecko/20100101 Firefox/90.0','Accept':'application/json, text/plain, */*'}
     prices_avg_columns = postgres_mtg.get_columns('prices_averages')
     prices_mkt_columns = postgres_mtg.get_columns('prices_market')
     # random_Api_calls = [BASEURL+str(i) for i  in shortlist] 
@@ -129,10 +131,20 @@ def update_all_cards_with_latest_prices(existing_ids, chunk_size):
         for api_call in chunk:
             if api_call is not None:
                 retry = 0
+                r_count = 0
                 success = False
+                
                 while (retry < retrylimit and not success):
                     try:
-                        r_prints = requests.get(BASEURL + "prints/" + str(api_call))
+                        r_prints = requests.get(BASEURL + "prints/" + str(api_call),headers=headers)
+                        while (retry < retrylimit and r_prints.status_code == 429):
+                            print ("Error 429 Too Many Requests Occurred, retrying...")
+                            # this timeout was experimentally determined by trying 5 seconds, 10 seconds, then 60 seconds
+                            time.sleep(60)
+                            r_prints.close()
+                            r_prints = requests.get(BASEURL + "prints/" + str(api_call),headers=headers)
+                            retry+=1
+
                         success = True
                     except Exception as error:
                         print (error)
@@ -161,6 +173,7 @@ def update_all_cards_with_latest_prices(existing_ids, chunk_size):
                 else:
                     retrylist.append(api_call)
                     print (str(r_prints.status_code) + " on Id " + str(api_call))
+                    print (r_prints.headers)
                     # log id, log status, probably retry
 
             end_time = time.time()
@@ -182,7 +195,7 @@ def update_all_cards_with_latest_prices(existing_ids, chunk_size):
 if __name__ == "__main__":
     test_stocks_api(9177)
     postgres_mtg = db_interface("conn_info_windows.ini")
-    update_all_cards_with_latest_prices(postgres_mtg.existing_ids, 1000)
+    update_all_cards_with_latest_prices(postgres_mtg.existing_ids, 100)
     # get_all_cards_magic(postgres_mtg.existing_ids, postgres_mtg.dead_ids, 10)
 
     postgres_mtg.close()

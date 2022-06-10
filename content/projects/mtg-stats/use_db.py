@@ -42,7 +42,6 @@ class db_interface:
             print(f"{type(error).__name__}: {error}")
             print("Query:", self.cursor.query)
             self.connection.rollback()
-            raise
 
         else:
             self.connection.commit() 

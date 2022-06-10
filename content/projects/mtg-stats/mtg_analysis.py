@@ -17,7 +17,7 @@ def readable_date(timestamp):
     timestamp = timestamp/1000
     return time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(timestamp))
 
-def data_formatter(dataframes):
+def data_formatter(cardname, dataframes):
     formatted_list = []
 
     for price_df in dataframes:
@@ -42,7 +42,7 @@ def data_formatter(dataframes):
                     price_std = time_df['avg'].std()
                     min_date = readable_date(time_df['timestamp'][money_min_index])
                     percent_change = 100*((most_recent_price - min_time_span)/min_time_span)
-                    price_list = [time, mtg_set, most_recent_price, min_time_span, min_date, round(percent_change, 2), round(price_std, 3)]
+                    price_list = [cardname, time, mtg_set, most_recent_price, min_time_span, min_date, round(percent_change, 2), round(price_std, 3)]
                     formatted_list.append(price_list)
                     # print (price_list)
 
