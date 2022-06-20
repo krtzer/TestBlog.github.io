@@ -35,6 +35,11 @@ pi@moode:~ $ dmesg | grep sound
 
 Seems like troubleshooting shows the sound card messing up, likely because i was turning off GPIO
 
+Bluetooth notes: 
+1) can have multiple devices  attacheh
+2) bluetooth shows where the devices are connected. 
+3) get weird audio issues if both try to place at the same time. 
+
 [Raspberry Pi Relay - GPIO Control](https://play.google.com/store/apps/details?id=com.jasonfindlay.pirelaypro&hl=en_IE)
 [What the hell is UPnP?](https://en.wikipedia.org/wiki/List_of_UPnP_AV_media_servers_and_clients)
 [InnoMaker DAC Hat](https://www.inno-maker.com/product/hifi-dac-hat/)
