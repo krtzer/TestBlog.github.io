@@ -68,6 +68,9 @@ Bluetooth notes:
 2) bluetooth shows where the devices are connected. 
 3) get weird audio issues if both try to place at the same time. 
 
+# Soundtrack
+[Old Man Gloom - No](https://oldmangloom.bandcamp.com/album/no)
+
 [How to setup netgear static IO](https://kb.netgear.com/25722/How-do-I-reserve-an-IP-address-on-my-NETGEAR-router)
 [Apache Stepped on the moode audio web service]()
 http://192.168.1.1/start.htm
@@ -84,3 +87,4 @@ http://192.168.1.1/start.htm
 [GPIO Pinout](https://www.raspberrypi-spy.co.uk/2012/06/simple-guide-to-the-rpi-gpio-header-and-pins/#pret%20tyPhoto)
 
 future ideas: project approaches to finding out informaiton 
+
